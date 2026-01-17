@@ -1,0 +1,27 @@
+{
+    "compilerOptions": {
+        "target": "ESNext",
+        "module": "ESNext",
+        "moduleResolution": "bundler",
+        "jsx": "preserve",
+        "lib": ["ESNext", "DOM"],
+        "strict": true,
+        "isolatedModules": true,
+        "esModuleInterop": true,
+        "skipLibCheck": true,
+        "noEmit": true,
+        "allowImportingTsExtensions": true,
+
+        "baseUrl": ".",
+        "paths": {
+            "@/*": ["src/*"],
+            "@app/*": ["src/app/*"],
+            "@pages/*": ["src/pages/*"],
+            "@components/*": ["src/components/*"], 
+            "@style/*": ["src/style/*"], 
+            "@widgets/*": ["src/widgets/*"], 
+            "@store/*": ["src/store/*"] 
+        }
+    },
+    "include": ["index.ts", "App.vue", "env.d.ts", "src/**/*", "src/store/index.ts"]
+}
