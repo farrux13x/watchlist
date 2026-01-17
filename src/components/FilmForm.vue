@@ -1,27 +1,26 @@
 <template>
     <q-card class="q-pa-md">
-        <q-form @submit.prevent="$emit('submit')">
+        <q-form ref="formRef" @submit.prevent="handleSubmit">
             <div class="row q-col-gutter-md">
                 <div class="col-12 col-md-6">
-                    <q-input v-model="localForm.title" label="Title" filled :rules="[rules.required]" />
+                    <q-input v-model="model.title" label="Title" filled :rules="[rules.required]" />
                 </div>
                 <div class="col-12 col-md-6">
-                    <q-input v-model="localForm.director" label="Director" filled :rules="[rules.required]" />
+                    <q-input v-model="model.director" label="Director" filled :rules="[rules.required]" />
                 </div>
                 <div class="col-12 col-md-6">
-                    <q-select v-model="localForm.genre" label="Genre" filled :options="genreOptions"
+                    <q-select v-model="model.genre" label="Genre" filled :options="genreOptions"
                         :rules="[rules.required]" />
                 </div>
                 <div class="col-12 col-md-3">
-                    <q-input v-model.number="localForm.year" type="number" label="Year" filled
-                        :rules="yearRules" />
+                    <q-input v-model.number="model.year" type="number" label="Year" filled :rules="yearRules" />
                 </div>
                 <div class="col-12 col-md-3">
                     <div class="text-caption text-grey-7 q-mb-xs">Rating</div>
-                    <q-rating v-model="localForm.rating" size="20px" color="amber" />
+                    <q-rating v-model="model.rating" size="20px" color="amber" />
                 </div>
                 <div class="col-12">
-                    <q-input v-model="localForm.poster" label="Poster URL" filled
+                    <q-input v-model="model.poster" label="Poster URL" filled
                         hint="Paste an image URL for the poster" />
                 </div>
             </div>
@@ -42,7 +41,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch } from 'vue';
+import { ref } from 'vue';
 
 type FilmFormData = {
     title: string;
@@ -54,36 +53,19 @@ type FilmFormData = {
 };
 
 const props = defineProps<{
-    modelValue: FilmFormData;
     submitLabel: string;
     showDelete?: boolean;
     deleteLabel?: string;
 }>();
 
 const emit = defineEmits<{
-    (e: 'update:modelValue', value: FilmFormData): void;
     (e: 'submit'): void;
     (e: 'cancel'): void;
     (e: 'delete'): void;
 }>();
 
-const localForm = ref<FilmFormData>({ ...props.modelValue });
-
-watch(
-    () => props.modelValue,
-    (value) => {
-        localForm.value = { ...value };
-    },
-    { deep: true }
-);
-
-watch(
-    localForm,
-    (value) => {
-        emit('update:modelValue', { ...value });
-    },
-    { deep: true }
-);
+const model = defineModel<FilmFormData>({ required: true });
+const formRef = ref();
 
 const genreOptions = [
     'Action',
@@ -114,4 +96,10 @@ const yearRules = [
 
 const showDelete = props.showDelete ?? false;
 const deleteLabel = props.deleteLabel ?? 'Delete';
+
+const handleSubmit = async () => {
+    const isValid = await formRef.value?.validate();
+    if (isValid === false) return;
+    emit('submit');
+};
 </script>
